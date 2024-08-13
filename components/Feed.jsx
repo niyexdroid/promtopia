@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import PromptCard from './PromptCard';
+
 
 const PromptCardList = ({data, handleTagClick}) => {
   return (
@@ -19,16 +21,35 @@ const PromptCardList = ({data, handleTagClick}) => {
 const Feed = () => {
   const [searchText, setsearchText] = useState('');
   const [posts, setPosts] = useState([]);
+  const router = useRouter();
   const handleSearchChange = (e) => {
+    setsearchText(e.target.value);
   }
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/prompt`);
+        if (!response.ok){
+          throw new Error('Failed to fetch posts');
+        }
+        const data = await response.json();
+        setPosts(data);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    };
+  }
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch('/api/prompt');
-      const data = await response.json();
-      setPosts(data);
-    }
     fetchPosts();
-  }, [])
+  }, [router.asPath]); // Refetch posts when the route changes
+
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     const response = await fetch('/api/prompt');
+  //     const data = await response.json();
+  //     setPosts(data);
+  //   }
+  //   fetchPosts();
+  // }, [])
   return (
     <section className='feed'>
       <form className='relative w-full flex-center'>
@@ -48,4 +69,4 @@ const Feed = () => {
     </section>
   )
 }
-export default Feed
+export default Feed;

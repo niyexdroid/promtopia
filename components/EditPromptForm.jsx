@@ -40,6 +40,7 @@ const EditPromptForm = () => {
       });
       if(response.ok) {
         router.push('/');
+        fetchPosts();
       }
     } catch (error) {
       console.log(error);

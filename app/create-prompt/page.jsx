@@ -31,7 +31,7 @@ const CreatePrompt = () => {
       })
       if(response.ok) {
         router.push('/');
-        fetchPosts();
+        setTimeout(() => fetchPosts(), 500);
       }
     } catch (error) {
       console.log(error);
